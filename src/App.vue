@@ -14,7 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
       </nav>
     </div>
     <div class="header__account">
-      <RouterLink to="/">MY ACCOUNT</RouterLink>
+      <RouterLink to="/add">MY ACCOUNT</RouterLink>
     </div>
   </header>
   <RouterView />

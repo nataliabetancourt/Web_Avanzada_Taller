@@ -84,12 +84,17 @@ $mainColor: #6739CB;
 
 li {
     list-style: none;
+
+    &__hover {
+        cursor: pointer;
+    }
 }
 
 ul {
     display: flex;
     margin: 130px 80px 0 80px;
     justify-content: space-between;
+    cursor: pointer;
 }
 .favorites {
     font-family: 'Outfit', sans-serif;
@@ -107,6 +112,7 @@ ul {
     margin: 40px 45px 20px 45px;
 
     &__description {
+        color: $fontColor;
         margin: auto;
         font-family: 'Outfit', sans-serif;
         font-size: 1em;
