@@ -11,10 +11,11 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/shop" class="header__pages__item">SHOP</RouterLink>
         <RouterLink to="/" class="header__pages__item">MEMBERSHIP</RouterLink>
         <RouterLink to="/" class="header__pages__item">WISHLIST</RouterLink>
+        <RouterLink to="/add" class="header__pages__item">ADD PRODUCT</RouterLink>
       </nav>
     </div>
     <div class="header__account">
-      <RouterLink to="/add">MY ACCOUNT</RouterLink>
+      <RouterLink to="/">MY ACCOUNT</RouterLink>
     </div>
   </header>
   <RouterView />
@@ -54,7 +55,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 50%;
+    width: 80%;
     margin: 10px;
 
     &__item {

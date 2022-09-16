@@ -26,7 +26,7 @@ ul {
 }
 
 li {
-    margin-left: 30px;
+    margin-left: 20px;
 }
 
 a {
@@ -43,7 +43,7 @@ a {
     color: $fontColor;
 
     &__social {
-        height: 30px;
+        height: 20px;
     }
 }
 </style>

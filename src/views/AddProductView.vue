@@ -1,22 +1,92 @@
+<script>
+import Footer from "../components/Footer.vue";
+import StarRating from "vue-star-rating";
+import { mapStores } from "pinia";
+import { useBooksStore } from "../stores/books.js";
+
+export default {
+  data() {
+    return {
+      title: "",
+      author: "",
+      price: "",
+      description: "",
+      genre: "",
+      rating: 0,
+      reader: new FileReader(),
+      imgURL: null
+    };
+  },
+
+  computed: {
+    ...mapStores(useBooksStore),
+  },
+
+  methods: {
+    createNewBook() {
+      //Organize id for book detail page
+      const idLowerCase = this.title.toLowerCase();
+      const id = idLowerCase.replace(/\s+/g, '-');
+
+      //Create book object
+      const newBook = {
+        id: id,
+        title: this.title,
+        author: this.author,
+        price: this.price,
+        description: this.description,
+        genre: this.genre,
+        rating: this.rating,
+        image: this.imgURL
+      };
+
+      //Add to local storage
+      this.booksStore.newBook(newBook);
+
+      //Empty inputs when new product added to local storage
+      this.title = "";
+      this.author = "";
+      this.price = "";
+      this.description = "";
+    },
+
+    readImage(e) {
+      this.reader.readAsDataURL(e.target.files[0]);
+
+      this.reader.addEventListener("load", () => {
+        this.imgURL = this.reader.result;
+      });
+    },
+  },
+
+  components: {
+    Footer,
+    StarRating,
+  },
+};
+</script>
+  
 <template>
   <h2 class="title">Add product</h2>
-  <form class="form">
-    <label for="name" class="form__label">BOOK TITLE</label>
+  <div class="form">
+    <label for="title" class="form__label">TITLE</label>
     <input
       type="text"
       name="name"
       placeholder="Book title"
       class="form__input"
       id="title"
+      v-model="title"
     />
 
-    <label for="name" class="form__label">BOOK AUTHOR</label>
+    <label for="author" class="form__label">AUTHOR</label>
     <input
       type="text"
       name="name"
       placeholder="Book author"
       class="form__input"
       id="author"
+      v-model="author"
     />
 
     <label for="price" class="form__label">PRICE</label>
@@ -26,6 +96,7 @@
       placeholder="Book price"
       class="form__input"
       id="price"
+      v-model="price"
     />
 
     <label for="description" class="form__label">DESCRIPTION</label>
@@ -34,38 +105,48 @@
       class="form__input form__input--description"
       id="description"
       placeholder="Write the book summary here..."
+      v-model="description"
     ></textarea>
 
     <label for="category" class="form__label">GENRE</label>
-    <select name="category" id="category" class="form__input">
+    <select name="category" id="category" class="form__input" v-model="genre">
       <option hidden disabled selected value>Select an option...</option>
-      <option value="face">Classics</option>
-      <option value="cheek">Horror</option>
-      <option value="eyes">Thriller</option>
-      <option value="lips">Romance</option>
-      <option value="lips">Sci-Fi</option>
-      <option value="lips">Fantasy</option>
+      <option value="classics">Classics</option>
+      <option value="horror">Horror</option>
+      <option value="thriller">Thriller</option>
+      <option value="romance">Romance</option>
+      <option value="sci-fi">Sci-Fi</option>
+      <option value="fantasy">Fantasy</option>
     </select>
 
-    <div class="form__row">
-      <label for="images" class="form__label">IMAGES</label>
-      <input
-        type="file"
-        name="images"
-        id="images"
-        class="form__upload"
-        multiple
-      />
-
-      <input type="submit" value="ADD PRODUCT" class="form__submit" />
+    <div class="form__rating">
+      <h4 class="form__label">RATING</h4>
+      <star-rating
+        :increment="0.5"
+        v-model:rating="rating"
+        :rounded-corners="true"
+        :border-width="2"
+      ></star-rating>
     </div>
-  </form>
-  <img class="illustration" src="../assets/illustration.png" alt="" />
-</template>
 
-<script>
-export default {};
-</script>
+    <label for="images" class="form__label">IMAGES</label>
+    <input
+      type="file"
+      name="images"
+      id="images"
+      class="form__upload"
+      multiple
+      @change="readImage"
+    />
+
+    <button type="submit" class="form__submit" @click="(e) => createNewBook()">
+      ADD PRODUCT
+    </button>
+  </div>
+
+  <img class="illustration" src="../assets/illustration.png" alt="" />
+  <Footer />
+</template>
 
 <style lang="scss">
 $background: #fdfaf3;
@@ -92,7 +173,7 @@ $mainColor: #6739cb;
     font-family: "Outfit", sans-serif;
     display: block;
     font-size: 1em;
-    border: solid 2px $mainColor;
+    border: solid 2px $fontColor;
     padding: 5px;
     width: 50%;
     height: 25px;
@@ -102,6 +183,10 @@ $mainColor: #6739cb;
     &--description {
       height: 70px;
     }
+  }
+
+  &__rating {
+    margin-bottom: 10px;
   }
 
   &__upload {
@@ -117,7 +202,7 @@ $mainColor: #6739cb;
       color: $fontColor;
       display: inline-block;
       background-color: white;
-      border: 2px solid $mainColor;
+      border: 2px solid $fontColor;
       border-radius: 3px;
       padding: 5px 8px;
       outline: none;
@@ -135,15 +220,16 @@ $mainColor: #6739cb;
     font-family: "Outfit", sans-serif;
     color: $fontColor;
     background-color: transparent;
-    border: 2px solid $mainColor;
+    border: 2px solid $fontColor;
     padding: 10px 40px;
     width: 35%;
     margin-top: 20px;
     font-weight: 500;
 
     &:hover {
+      cursor: pointer;
       border: 2px solid $fontColor;
-      background-color: $fontColor;
+      background-color: $mainColor;
       font-weight: normal;
       color: $background;
     }

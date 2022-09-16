@@ -94,6 +94,7 @@
         background-color: transparent;
     
         &:hover {
+          cursor: pointer;
           background-color: $mainColor;
           font-weight: 600;
           color: $background;
