@@ -12,14 +12,14 @@ export const useBooksStore = defineStore("books", {
 
     actions: {
         newBook(book) {
-            //Add to local storage
+            //Add to local storage list
             this.localStorageBooks.push(book);
             //Add to list
             this.books.push(book);
-            localStorage.setItem('books', JSON.stringify(this.localStorageBooks));
+            localStorage.setItem('books', JSON.stringify(this.books));
         },
 
-        loadProducts() {
+        loadBooks() {
             this.localStorageBooks = JSON.parse(localStorage.getItem('books'));
             this.books = this.books.concat([...this.localStorageBooks]);
         }
