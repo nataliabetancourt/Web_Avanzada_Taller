@@ -14,7 +14,7 @@ export default {
       genre: "",
       rating: 0,
       reader: new FileReader(),
-      imgURL: null
+      imgURL: null,
     };
   },
 
@@ -106,17 +106,18 @@ export default {
       id="description"
       placeholder="Write the book summary here..."
       v-model="description"
+      @change="descriptionBreaks"
     ></textarea>
 
     <label for="category" class="form__label">GENRE</label>
     <select name="category" id="category" class="form__input" v-model="genre">
       <option hidden disabled selected value>Select an option...</option>
-      <option value="classics">Classics</option>
-      <option value="horror">Horror</option>
-      <option value="thriller">Thriller</option>
-      <option value="romance">Romance</option>
-      <option value="sci-fi">Sci-Fi</option>
-      <option value="fantasy">Fantasy</option>
+      <option value="CLASSICS">Classics</option>
+      <option value="HORROR">Horror</option>
+      <option value="THRILLER">Thriller</option>
+      <option value="ROMANCE">Romance</option>
+      <option value="SCI-FI">Sci-Fi</option>
+      <option value="FANTASY">Fantasy</option>
     </select>
 
     <div class="form__rating">

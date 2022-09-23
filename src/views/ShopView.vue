@@ -1,6 +1,7 @@
 <script>
 import { mapStores } from "pinia";
 import { useBooksStore } from "../stores/books";
+import Stars from "../components/Stars.vue";
 
 export default {
   data() {
@@ -9,35 +10,8 @@ export default {
         style: "currency",
         currency: "USD",
       }),
-      starImg: null,
-    };
-  },
 
-  methods: {
-    starRating(star) {
-      if (star == 0.5) {
-        this.starImg = "/src/assets/stars/0.5.png";
-      } else if (star == 1) {
-        this.starImg = "/src/assets/stars/1.png";
-      } else if (star == 1.5) {
-        this.starImg = "/src/assets/stars/1.5.png";
-      } else if (star == 2) {
-        this.starImg = "/src/assets/stars/2.png";
-      } else if (star == 2.5) {
-        this.starImg = "/src/assets/stars/2.5.png";
-      } else if (star == 3) {
-        this.starImg = "/src/assets/stars/3.png";
-      } else if (star == 3.5) {
-        this.starImg = "/src/assets/stars/3.5.png";
-      } else if (star == 4) {
-        this.starImg = "/src/assets/stars/4.png";
-      } else if (star == 4.5) {
-        this.starImg = "/src/assets/stars/4.5.png";
-      } else if (star == 5) {
-        this.starImg = "/src/assets/stars/5.png";
-      }
-      return this.starImg;
-    },
+    };
   },
 
   computed: {
@@ -61,6 +35,10 @@ export default {
       location.reload();
     }
   },
+
+  components: {
+    Stars
+  } 
 };
 </script>
 
@@ -80,7 +58,8 @@ export default {
         <h4 class="shop__title">{{ book.title }}</h4>
         <p class="shop__author">{{ book.author }}</p>
         <p>{{ dollar.format(book.price) }}</p>
-        <img :src="starRating(book.rating)" alt="" />
+        <!---<img :src="starRating(book.rating)" alt="" />-->
+        <Stars :rating=book.rating />
       </div>
     </RouterLink>
   </div>
@@ -115,7 +94,7 @@ a {
   &__book {
     width: 12%;
     height: 350px;
-    margin: 0 20px 40px 10px;
+    margin: 0 20px 60px 10px;
     align-content: center;
     display: flex;
     flex-direction: column;

@@ -22,6 +22,11 @@ export const useBooksStore = defineStore("books", {
         loadBooks() {
             this.localStorageBooks = JSON.parse(localStorage.getItem('books'));
             this.books = this.books.concat([...this.localStorageBooks]);
-        }
+        },
+
+        getBookById(id) {
+            const filteredProducts = this.books.filter((book) => id === book.id);
+            return filteredProducts ? {...filteredProducts[0] } : null
+        },
     }
 });
