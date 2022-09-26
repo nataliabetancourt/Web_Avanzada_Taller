@@ -1,35 +1,46 @@
 <script>
-import HomeCarousel from '../components/HomeCarousel.vue'
-import HomeBookFav from '../components/HomeBookFav.vue'
-import Footer from '../components/Footer.vue'
+import HomeCarousel from "../components/HomeCarousel.vue";
+import HomeBookFav from "../components/HomeBookFav.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   components: {
     HomeCarousel,
     HomeBookFav,
-    Footer
+    Footer,
   },
-}
+};
 </script>
 
 <template>
   <main>
-    <HomeCarousel/>
-    <HomeBookFav/>
+    <HomeCarousel />
+    <HomeBookFav />
     <section>
-      <img class="banner" src="https://dispatch.barnesandnoble.com/content/dam/ccr/homepage/daily/2022/09/10/24396_BB_C_Pre-Orders_09-10.jpg">
+      <img
+        class="banner"
+        src="https://dispatch.barnesandnoble.com/content/dam/ccr/homepage/daily/2022/09/10/24396_BB_C_Pre-Orders_09-10.jpg"
+      />
     </section>
-    <Footer/>
+    <Footer />
   </main>
 </template>
 
 <style scoped lang="scss">
-$background: #FDFAF3;
-$fontColor: #391B00;
-$mainColor: #6739CB;
+$background: #fdfaf3;
+$fontColor: #391b00;
+$mainColor: #6739cb;
 
 .banner {
   width: 100%;
   margin-top: 60px;
+}
+
+@media all and (max-width: 420px) {
+  .banner {
+    height: 300px;
+    object-fit: cover;
+    margin-top: 30px;
+  }
 }
 </style>

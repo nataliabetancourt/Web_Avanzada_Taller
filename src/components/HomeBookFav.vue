@@ -185,4 +185,38 @@ ul {
     }
   }
 }
+
+@media all and (max-width: 420px) {
+  ul {
+    display: flex;
+    flex-direction: column;
+    margin: 80px auto 0;
+    text-align: center;
+  }
+
+  .favorites {
+    margin-bottom: 20px;
+    margin-left: -10px;
+    font-size: 1.8em;
+  }
+
+  .info {
+    margin-top: 20px;
+
+    &__description {
+      width: 100%;
+      font-size: 1.2em;
+    }
+
+    &__images {
+      width: 100%;
+      flex-direction: column;
+
+      &--img {
+        width: 100%;
+        height: 300px;
+      }
+    }
+  }
+}
 </style>

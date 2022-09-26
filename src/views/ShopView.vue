@@ -2,6 +2,7 @@
 import { mapStores } from "pinia";
 import { useBooksStore } from "../stores/books";
 import Stars from "../components/Stars.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   data() {
@@ -10,7 +11,29 @@ export default {
         style: "currency",
         currency: "USD",
       }),
-
+      firstFilter: null,
+      secondFilter: null,
+      filters: {
+        Genre: [
+          { name: "Classics", value: "classics" },
+          { name: "Horror", value: "horror" },
+          { name: "Thriller", value: "thriller" },
+          { name: "Romance", value: "romance" },
+          { name: "Sci-Fi", value: "sci-fi" },
+          { name: "Fantasy", value: "fantasy" },
+        ],
+        Rating: [
+          { name: "Over 1 star", value: "1<" },
+          { name: "Over 2 stars", value: "2<" },
+          { name: "Over 3 stars", value: "3<" },
+          { name: "Over 4 stars", value: "4<" },
+        ],
+        Price: [
+          { name: "Between $10 and $20", value: "10-20" },
+          { name: "Between $20 and $30", value: "20-30" },
+          { name: "Over $30", value: "30" },
+        ],
+      },
     };
   },
 
@@ -18,6 +41,23 @@ export default {
     ...mapStores(useBooksStore),
     allBooks() {
       return this.booksStore.getBooks;
+    },
+  },
+
+  methods: {
+    filterBooks() {
+      console.log(this.secondFilter);
+      this.genreFilter(this.secondFilter);
+    },
+
+    genreFilter(filter) {
+      if (filter !== "") {
+        let filteredBooks = this.allBooks.filter(
+          (book) => book.genre == filter
+        );
+        this.allBooks = filteredBooks;
+        console.log(filteredBooks);
+      }
     },
   },
 
@@ -37,14 +77,33 @@ export default {
   },
 
   components: {
-    Stars
-  } 
+    Stars,
+    Footer,
+  },
 };
 </script>
 
 <template>
   <div class="top">
-    <h2 class="top__title">ENJOY OUR WIDE VARIETY</h2>
+    <div class="top__one">
+      <h2 class="top__title">ENJOY OUR WIDE VARIETY</h2>
+    </div>
+    <div class="top__two">
+      <h3 class="top__filter">FILTER BY:</h3>
+      <select v-model="firstFilter" class="top__select">
+        <option v-for="(item, index) in filters">{{ index }}</option>
+      </select>
+      <select
+        v-model="secondFilter"
+        v-if="firstFilter"
+        class="top__select"
+        @change="filterBooks"
+      >
+        <option v-for="filter in filters[firstFilter]" :value="filter.value">
+          {{ filter.name }}
+        </option>
+      </select>
+    </div>
   </div>
   <div class="shop">
     <RouterLink
@@ -58,11 +117,11 @@ export default {
         <h4 class="shop__title">{{ book.title }}</h4>
         <p class="shop__author">{{ book.author }}</p>
         <p>{{ dollar.format(book.price) }}</p>
-        <!---<img :src="starRating(book.rating)" alt="" />-->
-        <Stars :rating=book.rating />
+        <Stars :rating="book.rating" />
       </div>
     </RouterLink>
   </div>
+  <Footer />
 </template>
 
 <style lang="scss">
@@ -76,12 +135,34 @@ a {
 
 .top {
   margin: 120px 0 0 45px;
+  font-family: "Outfit", sans-serif;
+  color: $fontColor;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   &__title {
     font-family: "Outfit", sans-serif;
     font-weight: 600;
     font-size: 1.6em;
-    color: $fontColor;
+  }
+
+  &__two {
+    display: flex;
+    margin-right: 45px;
+    font-family: "Outfit", sans-serif;
+  }
+
+  &__filter {
+    font-weight: 500;
+    margin-right: 15px;
+  }
+
+  &__select {
+    font-family: "Outfit", sans-serif;
+    padding: 5px;
+    margin-right: 5px;
+    border: 2px solid $fontColor;
   }
 }
 
@@ -104,6 +185,7 @@ a {
   &__info {
     align-items: flex-start;
     height: 90px;
+    color: $fontColor;
   }
 
   &__title {
@@ -123,11 +205,42 @@ a {
   }
 }
 
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+@media all and (max-width: 420px) {
+  .top {
+    flex-direction: column;
+
+    &__two {
+      width: 100%;
+      flex-direction: column;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    &__select {
+      margin: 10px 0;
+    }
+  }
+
+  .shop {
+    flex-direction: column;
+    margin: 20px auto;
+    text-align: center;
+
+    &__book {
+      width: 100%;
+      height: 520px;
+      margin: 15px auto;
+    }
+
+    &__img {
+      height: 400px;
+      object-fit: contain;
+    }
+
+    &__info {
+      font-size: 1.2em;
+      height: 120px;
+    }
   }
 }
 </style>

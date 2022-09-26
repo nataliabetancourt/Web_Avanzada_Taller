@@ -6,12 +6,14 @@ import { RouterLink, RouterView } from 'vue-router'
   <header class="header">
     <div class="header__column">
       <img src="./assets/full_logo.png" alt="" class="header__logo">
+      <img src="./assets/menu.png" alt="Menu" class="header--menu"/>
       <nav class="header__pages">
         <RouterLink to="/" class="header__pages__item">HOME</RouterLink>
         <RouterLink to="/shop" class="header__pages__item">SHOP</RouterLink>
         <RouterLink to="/" class="header__pages__item">MEMBERSHIP</RouterLink>
         <RouterLink to="/" class="header__pages__item">WISHLIST</RouterLink>
         <RouterLink to="/add" class="header__pages__item">ADD PRODUCT</RouterLink>
+        
       </nav>
     </div>
     <div class="header__account">
@@ -46,6 +48,10 @@ a {
   z-index: 10;
   top: 0;
 
+  &--menu {
+      display: none;
+    }
+
   &__column {
     display: flex;
     align-items: center;
@@ -70,6 +76,30 @@ a {
 
   &__account {
     margin: 15px;
+  }
+}
+
+@media all and (max-width: 420px) {
+  .header {
+    &--menu {
+        display: block;
+        height: 25px;
+        margin-right: 15px;
+      }
+
+    &__column {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    &__pages {
+      display: none;
+    }
+
+    &__account {
+      display: none;
+    }
   }
 }
 </style>

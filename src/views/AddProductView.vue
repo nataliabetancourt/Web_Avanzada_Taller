@@ -149,7 +149,7 @@ export default {
   <Footer />
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $background: #fdfaf3;
 $fontColor: #391b00;
 $mainColor: #6739cb;
@@ -242,5 +242,34 @@ $mainColor: #6739cb;
   right: 0;
   width: 40%;
   top: 120px;
+}
+
+
+@media all and (max-width: 420px) {
+  .illustration {
+    display: none;
+  }
+
+  .title {
+    margin: 100px auto 0;
+    text-align: center;
+  }
+
+  .form {
+    width: 100%;
+    justify-content: center;
+    margin: 30px 0px 0 30px;
+
+    &__input {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+      margin-left: 0;
+    }
+
+    &__submit {
+      width: 80%;
+    }
+  }
 }
 </style>
