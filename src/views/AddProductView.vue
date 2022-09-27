@@ -30,14 +30,14 @@ export default {
 
       //Create book object
       const newBook = {
-        id: id,
-        title: this.title,
-        author: this.author,
-        price: this.price,
-        description: this.description,
-        genre: this.genre,
-        rating: this.rating,
-        image: this.imgURL
+        'id': id,
+        'title': this.title,
+        'author': this.author,
+        'price': this.price,
+        'description': this.description,
+        'genre': this.genre,
+        'rating': this.rating,
+        'image': this.imgURL
       };
 
       //Add to local storage

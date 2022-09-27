@@ -94,7 +94,7 @@ $mainColor: #6739cb;
 }
 
 .img {
-  margin: 10px auto 0;
+  margin: 120px auto 0;
 
   &__img {
     height: 500px;

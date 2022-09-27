@@ -15,30 +15,32 @@ export default {
       secondFilter: null,
       filters: {
         Genre: [
-          { name: "Classics", value: "classics" },
-          { name: "Horror", value: "horror" },
-          { name: "Thriller", value: "thriller" },
-          { name: "Romance", value: "romance" },
-          { name: "Sci-Fi", value: "sci-fi" },
-          { name: "Fantasy", value: "fantasy" },
+          { name: "Classics", value: "CLASSICS" },
+          { name: "Horror", value: "HORROR" },
+          { name: "Thriller", value: "THRILLER" },
+          { name: "Romance", value: "ROMANCE" },
+          { name: "Sci-Fi", value: "SCI-FI" },
+          { name: "Fantasy", value: "FANTASY" },
         ],
         Rating: [
-          { name: "Over 1 star", value: "1<" },
-          { name: "Over 2 stars", value: "2<" },
-          { name: "Over 3 stars", value: "3<" },
-          { name: "Over 4 stars", value: "4<" },
+          { name: "Over 1 star", value: 1 },
+          { name: "Over 2 stars", value: 2 },
+          { name: "Over 3 stars", value: 3 },
+          { name: "Over 4 stars", value: 4 },
         ],
         Price: [
-          { name: "Between $10 and $20", value: "10-20" },
-          { name: "Between $20 and $30", value: "20-30" },
-          { name: "Over $30", value: "30" },
+          { name: "Between $5 and $10", value: "5-10" },
+          { name: "Between $10 and $15", value: "10-15" },
+          { name: "Over $15", value: "15" },
         ],
       },
+      drawBooks: []
     };
   },
 
   computed: {
     ...mapStores(useBooksStore),
+
     allBooks() {
       return this.booksStore.getBooks;
     },
@@ -46,23 +48,15 @@ export default {
 
   methods: {
     filterBooks() {
-      console.log(this.secondFilter);
-      this.genreFilter(this.secondFilter);
-    },
-
-    genreFilter(filter) {
-      if (filter !== "") {
-        let filteredBooks = this.allBooks.filter(
-          (book) => book.genre == filter
-        );
-        this.allBooks = filteredBooks;
-        console.log(filteredBooks);
-      }
+      this.drawBooks = this.booksStore.filterBooks(this.secondFilter);
+      const filter = this.secondFilter;
+      console.log(this.booksStore.filterBooks(filter));
     },
   },
 
   mounted() {
     this.booksStore.loadBooks();
+    this.drawBooks = this.allBooks;
 
     //To avoid duplicates everytime the page opens
     if (localStorage.getItem("reloaded")) {
@@ -107,7 +101,7 @@ export default {
   </div>
   <div class="shop">
     <RouterLink
-      v-for="book in allBooks"
+      v-for="book in drawBooks"
       :key="book.id"
       :to="`/details/${book.id}`"
       class="shop__book"
