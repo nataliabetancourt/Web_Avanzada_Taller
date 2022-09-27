@@ -231,7 +231,7 @@ export const useBooksStore = defineStore("books", {
             //Add to local storage list
             this.localStorageBooks.push(book);
             //Add to list
-            //this.books.push(book);
+            this.books.push(book);
             localStorage.setItem('books', JSON.stringify(this.books));
         },
 
@@ -239,21 +239,25 @@ export const useBooksStore = defineStore("books", {
             this.localStorageBooks = JSON.parse(localStorage.getItem('books'));
             if (this.localStorageBooks != null) {
                 this.books = this.books.concat([...this.localStorageBooks]);
-                //Remove duplicates
-                const differentIds = [];
-                const removeDuplicates = this.books.filter (book => {
-                    const isDuplicate = differentIds.includes(book.id);
-
-                    if (!isDuplicate) {
-                        differentIds.push(book.id);
-                        return true;
-                    }
-
-                    return false;
-                });
-                
-                this.books = removeDuplicates;
+                this.removeDuplicates();
             }
+        },
+
+        removeDuplicates() {
+            //Remove duplicates
+            const differentIds = [];
+            const removeDuplicates = this.books.filter (book => {
+                const isDuplicate = differentIds.includes(book.id);
+
+                if (!isDuplicate) {
+                    differentIds.push(book.id);
+                    return true;
+                }
+
+                return false;
+            });
+
+            this.books = removeDuplicates;
         },
 
         getBookById(id) {
