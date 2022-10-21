@@ -4,13 +4,7 @@ import { mapStores } from "pinia";
 import { useAuthenticationStore } from "./stores/authentication";
 
 export default {
-  
-  computed: {
-    ...mapStores(useAuthenticationStore),
-    userIsLogged(){
-        return this.authenticationStore.auth.currentUser !== null || undefined
-    }
-  },
+
 }
 
 </script>
@@ -25,7 +19,7 @@ export default {
         <RouterLink to="/shop" class="header__pages__item">SHOP</RouterLink>
         <RouterLink to="/" class="header__pages__item">MEMBERSHIP</RouterLink>
         <RouterLink to="/" class="header__pages__item">WISHLIST</RouterLink>
-        <RouterLink to="/add" class="header__pages__item" v-if="userIsLogged">ADD PRODUCT</RouterLink>
+        <RouterLink to="/add" class="header__pages__item">ADD PRODUCT</RouterLink>
         
       </nav>
     </div>

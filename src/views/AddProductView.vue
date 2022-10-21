@@ -3,6 +3,7 @@ import Footer from "../components/Footer.vue";
 import StarRating from "vue-star-rating";
 import { mapStores } from "pinia";
 import { useBooksStore } from "../stores/books.js";
+import { useFirestoreStore } from "../stores/firestore";
 
 export default {
   data() {
@@ -19,29 +20,32 @@ export default {
   },
 
   computed: {
-    ...mapStores(useBooksStore),
+    ...mapStores(useBooksStore, useFirestoreStore),
   },
 
   methods: {
-    createNewBook() {
+    async createNewBook() {
       //Organize id for book detail page
       const idLowerCase = this.title.toLowerCase();
-      const id = idLowerCase.replace(/\s+/g, '-');
+      const id = idLowerCase.replace(/\s+/g, "-");
 
       //Create book object
       const newBook = {
-        'id': id,
-        'title': this.title,
-        'author': this.author,
-        'price': this.price,
-        'description': this.description,
-        'genre': this.genre,
-        'rating': this.rating,
-        'image': this.imgURL
+        id: id,
+        title: this.title,
+        author: this.author,
+        price: this.price,
+        description: this.description,
+        genre: this.genre,
+        rating: this.rating,
+        image: this.imgURL,
       };
 
+      //Add product to firestore database
+      await this.firestoreStore.addBook(newBook);
+
       //Add to local storage
-      this.booksStore.newBook(newBook);
+      //this.booksStore.newBook(newBook);
 
       //Empty inputs when new product added to local storage
       this.title = "";
@@ -243,7 +247,6 @@ $mainColor: #6739cb;
   width: 40%;
   top: 120px;
 }
-
 
 @media all and (max-width: 420px) {
   .illustration {

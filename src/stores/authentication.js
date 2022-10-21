@@ -6,7 +6,8 @@ import { async } from "@firebase/util";
 export const useAuthenticationStore = defineStore("authentication", {
     state: () => ({
         auth: auth,
-        userLogged: null
+        userLogged: null,
+        isAdmin: false
     }),
 
     actions: {
@@ -41,12 +42,20 @@ export const useAuthenticationStore = defineStore("authentication", {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     this.userLogged = user;
+
+                    if (user.uid == "iaH3QayFzrR2Jr7XxWRbIwOcLN83") {
+                        this.isAdmin = true;
+                        console.log(this.isAdmin);
+                    }
                 } else {
                     console.log("No user")
                 }
             })
-
             return this.userLogged;
+        },
+
+        checkAdmin() {
+            return this.isAdmin;
         }
     }
 });

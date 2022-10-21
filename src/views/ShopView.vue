@@ -3,6 +3,7 @@ import { mapStores } from "pinia";
 import { useBooksStore } from "../stores/books";
 import Stars from "../components/Stars.vue";
 import Footer from "../components/Footer.vue";
+import { useFirestoreStore } from "../stores/firestore";
 
 export default {
   data() {
@@ -34,16 +35,17 @@ export default {
           { name: "Over $15", value: "15" },
         ],
       },
-      drawBooks: []
+      drawBooks: [],
+      firebaseBooks: []
     };
   },
 
   computed: {
-    ...mapStores(useBooksStore),
+    ...mapStores(useBooksStore, useFirestoreStore),
 
-    allBooks() {
+    /*allBooks() {
       return this.booksStore.getBooks;
-    },
+    }*/
   },
 
   methods: {
@@ -52,12 +54,17 @@ export default {
       const filter = this.secondFilter;
       console.log(this.booksStore.filterBooks(filter));
     },
+
+    async loadBooks() {
+      this.firebaseBooks = await this.firestoreStore.getBooks();
+    }
   },
 
-  mounted() {
-    this.booksStore.loadBooks();
+  async mounted() {
+    /*this.booksStore.loadBooks();
     this.drawBooks = this.allBooks;
-    this.booksStore.removeDuplicates();
+    this.booksStore.removeDuplicates();*/
+    this.drawBooks = await this.firestoreStore.getBooks();
   },
 
   components: {
