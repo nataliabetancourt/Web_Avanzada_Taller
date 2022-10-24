@@ -1,12 +1,10 @@
 import { defineStore } from "pinia";
-import { db, storage } from "../firebase/firebase"
-import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db } from "../firebase/firebase"
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 
 export const useFirestoreStore = defineStore("firestore", {
     state: () => ({
         db: db,
-        storage: storage
     }),
 
     actions: {
@@ -18,9 +16,9 @@ export const useFirestoreStore = defineStore("firestore", {
             }
         },
 
-        async addBook(book) {
+        async addBook(id, book) {
             try {
-                await addDoc(collection(db, "books"), book);
+                await setDoc(doc(db, "books", id), book);
                 console.log("Book added");
             } catch (error) {
                 console.log(error);
@@ -40,22 +38,17 @@ export const useFirestoreStore = defineStore("firestore", {
             } catch (error) {
                 console.log(error);
             }
-
-            console.log(books);
-        }
-
-        /*async imageUploadReference(image) {
-            const storageRef = ref(storage, `books/images/${image.name}`);
-            return await uploadBytes(storageRef, image);
         },
 
-        async uploadImages(images = []){
-            const uploadedImages = images.map(async (image) => {
-                const imgRef = await this.imageUploadReference(image);
-                return getDownloadURL(ref(storage, imgRef.ref.fullPath));
-            });
-
-            return uploadedImages;
-        }*/
+        async getSingleBook(id) {
+            const docRef = doc(db, "books", id);
+            try {
+                const docSnap = await getDoc(docRef);
+                const data = docSnap.data();
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 });

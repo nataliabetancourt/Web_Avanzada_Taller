@@ -1,8 +1,8 @@
 <script>
 import { mapStores } from "pinia";
-import { useBooksStore } from "../stores/books";
 import Stars from "../components/Stars.vue";
 import Footer from "../components/Footer.vue";
+import { useFirestoreStore } from "../stores/firestore";
 
 export default {
   data() {
@@ -16,12 +16,11 @@ export default {
   },
 
   computed: {
-    ...mapStores(useBooksStore),
+    ...mapStores(useFirestoreStore),
   },
 
-  mounted() {
-    this.booksStore.loadBooks();
-    this.currentBook = this.booksStore.getBookById(this.$route.params.bookId);
+  async mounted() {
+    this.currentBook = await this.firestoreStore.getSingleBook(this.$route.params.bookId);
   },
 
   components: {

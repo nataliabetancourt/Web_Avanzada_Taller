@@ -53,10 +53,6 @@ export default {
       this.drawBooks = this.booksStore.filterBooks(this.secondFilter);
       const filter = this.secondFilter;
       console.log(this.booksStore.filterBooks(filter));
-    },
-
-    async loadBooks() {
-      this.firebaseBooks = await this.firestoreStore.getBooks();
     }
   },
 

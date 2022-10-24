@@ -42,7 +42,7 @@ export default {
       };
 
       //Add product to firestore database
-      await this.firestoreStore.addBook(newBook);
+      await this.firestoreStore.addBook(newBook.id, newBook);
 
       //Add to local storage
       //this.booksStore.newBook(newBook);
