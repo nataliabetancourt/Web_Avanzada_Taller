@@ -45,16 +45,16 @@ export const useAuthenticationStore = defineStore("authentication", {
 
                     if (user.uid == "iaH3QayFzrR2Jr7XxWRbIwOcLN83") {
                         this.isAdmin = true;
-                        console.log(this.isAdmin);
                     }
                 } else {
                     console.log("No user")
                 }
             })
-            return this.userLogged;
+
+            return this.userLogged; 
         },
 
-        checkAdmin() {
+        getIsAdmin() {
             return this.isAdmin;
         }
     }

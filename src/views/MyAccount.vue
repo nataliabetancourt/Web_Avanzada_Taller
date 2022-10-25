@@ -39,7 +39,6 @@ export default {
       //Add to authentication
       if (this.passwordCreated == this.passwordConfirmation) {
         this.authenticationStore.signUp(this.emailCreated, this.passwordCreated);
-        console.log(this.authenticationStore.auth.currentUser.uid);
       }
 
       //Add additional info to firestore
@@ -72,10 +71,6 @@ export default {
         return this.authenticationStore.getUser() !== null
     }
   },
-
-  mounted() {
-    console.log(this.authenticationStore.getUser());
-  }
 };
 </script>
 
