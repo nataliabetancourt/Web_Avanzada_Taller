@@ -38,11 +38,11 @@ export default {
 
       //Add to authentication
       if (this.passwordCreated == this.passwordConfirmation) {
-        this.authenticationStore.signUp(this.emailCreated, this.passwordCreated);
+        await this.authenticationStore.signUp(this.emailCreated, this.passwordCreated);
       }
 
       //Add additional info to firestore
-      await this.firestoreStore.addUserDatabase(this.authenticationStore.auth.currentUser.uid, userInfo);
+      await this.firestoreStore.addUserDatabase(this.authenticationStore.getUser().uid, userInfo);
 
       this.name = "";
       this.lastname = "";

@@ -43,7 +43,7 @@ export const useAuthenticationStore = defineStore("authentication", {
                 if (user) {
                     this.userLogged = user;
 
-                    if (user.uid == "iaH3QayFzrR2Jr7XxWRbIwOcLN83") {
+                    if (user.uid == "Be9UXHWFcyREhEDwxyN2qepH0Pp2") {
                         this.isAdmin = true;
                     }
                 } else {

@@ -49,6 +49,32 @@ export const useFirestoreStore = defineStore("firestore", {
             } catch (error) {
                 console.log(error);
             }
+        },
+
+        async getUser(id) {
+            const docRef = doc(db, "users", id);
+            try {
+                const docSnap = await getDoc(docRef);
+                const data = docSnap.data();
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        addUserRatingList(id, ratingValue) {
+            const userRef = doc(db, 'users', id);
+            setDoc(userRef, { rating: ratingValue }, {merge: true});
+        },
+
+        addBookRatingList(id, ratingValue){
+            const bookRef = doc(db, 'books', id);
+            setDoc(bookRef, { ratingList: ratingValue }, {merge: true});
+        },
+
+        updateRating(id, newRating) {
+            const bookRef = doc(db, 'books', id);
+            setDoc(bookRef, { rating: newRating }, {merge: true});
         }
     }
 });

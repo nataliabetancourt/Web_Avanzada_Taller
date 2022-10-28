@@ -18,7 +18,7 @@ export default {
 <template>
   <header class="header">
     <div class="header__column">
-      <img src="./assets/full_logo.png" alt="" class="header__logo">
+      <router-link to="/"><img src="./assets/full_logo.png" alt="" class="header__logo"/></router-link>
       <img src="./assets/menu.png" alt="Menu" class="header--menu"/>
       <nav class="header__pages">
         <RouterLink to="/" class="header__pages__item">HOME</RouterLink>

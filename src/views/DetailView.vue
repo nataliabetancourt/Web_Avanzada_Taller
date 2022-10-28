@@ -3,11 +3,15 @@ import { mapStores } from "pinia";
 import Stars from "../components/Stars.vue";
 import Footer from "../components/Footer.vue";
 import { useFirestoreStore } from "../stores/firestore";
+import { useAuthenticationStore } from "../stores/authentication";
+import StarRating from "vue-star-rating";
 
 export default {
   data() {
     return {
       currentBook: {},
+      rating: null,
+      userRating: null,
       dollar: Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -16,16 +20,75 @@ export default {
   },
 
   computed: {
-    ...mapStores(useFirestoreStore),
+    ...mapStores(useAuthenticationStore, useFirestoreStore),
+  },
+
+  methods: {
+    async rateBook() {
+      if (this.authenticationStore.getUser() !== null) {
+        //User info
+        let uid = this.authenticationStore.getUser().uid;
+        let user = await this.firestoreStore.getUser(uid);
+
+        //Check if user has rated this book
+        if (!user.rating || !user.rating.includes(this.currentBook.id) && this.rating !== null) {
+          //Adds books rated by user to list, to avoid voting more than once
+          this.firestoreStore.addUserRatingList(uid, this.userRatingList(user));
+
+          //Add rating to book
+          this.firestoreStore.addBookRatingList(this.currentBook.id, this.bookRatingList(this.currentBook));
+        } else {
+          alert("You've already voted!");
+        }
+
+      } else {
+        alert("Please sign in before voting");
+      }
+
+      //Change book rating
+      this.changeBookRating(this.currentBook);
+    },
+
+    userRatingList(user) {
+      let userRatingArray;
+
+      if (user.rating === null || user.rating === undefined) {
+        userRatingArray = [this.currentBook.id];
+      } else if (user.rating.length > 0) {
+        userRatingArray = [...user.rating, this.currentBook.id];
+      }
+
+      return userRatingArray;
+    },
+
+    bookRatingList(book) {
+      let bookRatingArray;
+
+      if (book.ratingList == null || book.ratingList == undefined) {
+        bookRatingArray = [this.rating];
+      } else if (book.ratingList.length > 0) {
+        bookRatingArray = [...book.ratingList, this.rating];
+      }
+
+      return bookRatingArray;
+    },
+
+    changeBookRating(book) {
+      const average = book.ratingList.reduce((a, b) => a + b, 0) / book.ratingList.length;
+      this.firestoreStore.updateRating(this.currentBook.id, average);
+    }
   },
 
   async mounted() {
-    this.currentBook = await this.firestoreStore.getSingleBook(this.$route.params.bookId);
+    this.currentBook = await this.firestoreStore.getSingleBook(
+      this.$route.params.bookId
+    );
   },
 
   components: {
     Stars,
     Footer,
+    StarRating,
   },
 };
 </script>
@@ -45,6 +108,23 @@ export default {
       <img :src="this.currentBook.image" alt="" class="img__img" />
     </div>
   </div>
+
+  <div class="rating">
+    <h4 class="rating__title">Rate the book yourself!</h4>
+    <p class="rating__info">
+      Your opinion is important to us, please feel free to rate this book to
+      your liking. All you have to do is sign in and vote.
+    </p>
+    <star-rating
+      :increment="0.5"
+      v-model:rating="rating"
+      :rounded-corners="true"
+      :border-width="2"
+      class="rating__stars"
+      @click="rateBook"
+    ></star-rating>
+  </div>
+
   <Footer />
 </template>
 
@@ -102,6 +182,38 @@ $mainColor: #6739cb;
   }
 }
 
+.rating {
+  margin: 10px 0 50px 45px;
+  background-color: #6739cb;
+  padding: 20px;
+  width: 50%;
+  border-radius: 20px;
+  font-family: "Outfit", sans-serif;
+  color: white;
+
+  &__title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  &__info {
+    font-weight: 300;
+    margin-bottom: 15px;
+
+    &--user {
+      color: $mainColor;
+      margin: 10px;
+      font-size: 1em;
+      font-weight: 500;
+    }
+  }
+
+  &__stars {
+    margin-bottom: 15px;
+  }
+}
+
 @media all and (max-width: 420px) {
   .book {
     flex-direction: column;
@@ -144,6 +256,11 @@ $mainColor: #6739cb;
       object-fit: contain;
       box-shadow: 0px 4px 5px 5px rgba(98, 98, 98, 0.228);
     }
+  }
+
+  .rating {
+    width: 70%;
+    margin-top: 50px;
   }
 }
 </style>
