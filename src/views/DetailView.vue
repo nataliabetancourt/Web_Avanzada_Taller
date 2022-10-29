@@ -37,6 +37,9 @@ export default {
 
           //Add rating to book
           this.firestoreStore.addBookRatingList(this.currentBook.id, this.bookRatingList(this.currentBook));
+          
+          //Update the books rating
+          this.firestoreStore.changeBookRating(this.currentBook);
         } else {
           alert("You've already voted!");
         }
@@ -44,9 +47,6 @@ export default {
       } else {
         alert("Please sign in before voting");
       }
-
-      //Change book rating
-      this.changeBookRating(this.currentBook);
     },
 
     userRatingList(user) {
@@ -72,11 +72,6 @@ export default {
 
       return bookRatingArray;
     },
-
-    changeBookRating(book) {
-      const average = book.ratingList.reduce((a, b) => a + b, 0) / book.ratingList.length;
-      this.firestoreStore.updateRating(this.currentBook.id, average);
-    }
   },
 
   async mounted() {

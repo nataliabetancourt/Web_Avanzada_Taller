@@ -14,7 +14,6 @@ export default {
       }),
       firstFilter: null,
       secondFilter: null,
-      cart: [],
       filters: {
         Genre: [
           { name: "Classics", value: "CLASSICS" },
@@ -43,10 +42,6 @@ export default {
 
   computed: {
     ...mapStores(useAuthenticationStore, useFirestoreStore),
-
-    /*allBooks() {
-      return this.booksStore.getBooks;
-    }*/
   },
 
   methods: {
@@ -56,23 +51,40 @@ export default {
       console.log(this.booksStore.filterBooks(filter));*/
     },
 
+    async defineCart(user, bookToAdd){
+      let cart = [];
+      let firebaseCart = await this.firestoreStore.getCart(user.uid);
+
+        //Check if cart already exists 
+        if (firebaseCart == null || firebaseCart == undefined) {
+          //Make list with books
+          cart.push(bookToAdd);
+        } else if (firebaseCart.length > 0) {
+          cart = [...firebaseCart, bookToAdd];
+        }
+
+        return cart;
+    },
+
     async addToCart(e, book) {
       e.preventDefault();
-      
+
+      //Make sure user in signed in
       if (this.authenticationStore.getUser() !== null) {
         //User info
         let uid = this.authenticationStore.getUser().uid;
-
-        //Add book to cart
+        
+        //Book that is going to cart
         let bookToAdd = {
           'id': book.id,
           'title': book.title,
           'author': book.author,
-          'image': book.image
+          'image': book.image,
+          'price': book.price
         }
-        
-        this.cart.push(bookToAdd);
-        this.firestoreStore.createCart(uid, this.cart);
+
+        this.firestoreStore.createCart(uid, this.defineCart(this.authenticationStore.getUser(), bookToAdd));
+        //this.defineCart(this.authenticationStore.getUser(),bookToAdd);
       } else {
         alert("Please sign in before adding to cart");
       }
@@ -80,9 +92,6 @@ export default {
   },
 
   async mounted() {
-    /*this.booksStore.loadBooks();
-    this.drawBooks = this.allBooks;
-    this.booksStore.removeDuplicates();*/
     this.drawBooks = await this.firestoreStore.getBooks();
   },
 
@@ -135,7 +144,7 @@ export default {
   <Footer />
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $background: #fdfaf3;
 $fontColor: #391b00;
 $mainColor: #6739cb;

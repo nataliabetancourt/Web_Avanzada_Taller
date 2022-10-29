@@ -7,7 +7,10 @@ export default {
     },
 
     methods: {
-    starRating(star) {
+    starRating(rating) {
+      //Round of rating first
+      let star = this.roundRating(rating);
+      
       if (star == 0.5) {
         this.starImg = "/src/assets/stars/0.5.png";
       } else if (star == 1) {
@@ -31,6 +34,10 @@ export default {
       }
       return this.starImg;
     },
+
+    roundRating(rating) {
+      return Math.round(rating*2)/2;
+    }
   },
 
   props: {
@@ -46,8 +53,26 @@ export default {
 </script>
 
 <template>
-        <img :src=this.starRating(this.rating) alt=""/>
+  <div class="rate">
+    <img :src=this.starRating(this.rating) alt="" class="rate__img"/>
+    <p class="rate__text">{{this.rating}}</p>
+  </div>
 </template>
 
-<style>
+<style lang="scss" scoped>
+.rate {
+  display: flex;
+
+  &__img {
+    object-fit: contain;
+  }
+
+  &__text {
+    margin-left: 10px;
+    font-family: "Outfit", sans-serif;
+    font-weight: 300;
+    font-size: 1em;
+    color: #6739cb;
+  }
+}
 </style>

@@ -38,6 +38,7 @@ export default {
         description: this.description,
         genre: this.genre,
         rating: this.rating,
+        ratingList: [this.rating],
         image: this.imgURL,
       };
 
