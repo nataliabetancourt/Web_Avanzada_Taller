@@ -1,9 +1,9 @@
 <script>
 import { mapStores } from "pinia";
-import { useBooksStore } from "../stores/books";
 import Stars from "../components/Stars.vue";
 import Footer from "../components/Footer.vue";
 import { useFirestoreStore } from "../stores/firestore";
+import { useAuthenticationStore } from '../stores/authentication';
 
 export default {
   data() {
@@ -14,6 +14,7 @@ export default {
       }),
       firstFilter: null,
       secondFilter: null,
+      cart: [],
       filters: {
         Genre: [
           { name: "Classics", value: "CLASSICS" },
@@ -41,7 +42,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useBooksStore, useFirestoreStore),
+    ...mapStores(useAuthenticationStore, useFirestoreStore),
 
     /*allBooks() {
       return this.booksStore.getBooks;
@@ -50,9 +51,31 @@ export default {
 
   methods: {
     filterBooks() {
-      this.drawBooks = this.booksStore.filterBooks(this.secondFilter);
+      /*this.drawBooks = this.booksStore.filterBooks(this.secondFilter);
       const filter = this.secondFilter;
-      console.log(this.booksStore.filterBooks(filter));
+      console.log(this.booksStore.filterBooks(filter));*/
+    },
+
+    async addToCart(e, book) {
+      e.preventDefault();
+      
+      if (this.authenticationStore.getUser() !== null) {
+        //User info
+        let uid = this.authenticationStore.getUser().uid;
+
+        //Add book to cart
+        let bookToAdd = {
+          'id': book.id,
+          'title': book.title,
+          'author': book.author,
+          'image': book.image
+        }
+        
+        this.cart.push(bookToAdd);
+        this.firestoreStore.createCart(uid, this.cart);
+      } else {
+        alert("Please sign in before adding to cart");
+      }
     }
   },
 
@@ -106,6 +129,7 @@ export default {
         <p>{{ dollar.format(book.price) }}</p>
         <Stars :rating="book.rating" />
       </div>
+      <button class="shop__add" @click="addToCart($event, book)">ADD TO CART</button>
     </RouterLink>
   </div>
   <Footer />
@@ -161,8 +185,8 @@ a {
 
   &__book {
     width: 12%;
-    height: 350px;
-    margin: 0 20px 60px 10px;
+    min-height: 350px;
+    margin: 10px 30px 50px;
     align-content: center;
     display: flex;
     flex-direction: column;
@@ -171,7 +195,6 @@ a {
 
   &__info {
     align-items: flex-start;
-    height: 90px;
     color: $fontColor;
   }
 
@@ -189,6 +212,25 @@ a {
   &__img {
     width: 100%;
     height: 250px;
+  }
+
+  &__add {
+    width: 100%;
+    height: 40px;
+    font-family: "Outfit", sans-serif;
+    font-size: 1em;
+    margin-top: 20px;
+    border: #391b00 solid 2px;
+    background-color: transparent;
+    text-decoration: none;
+    justify-content: flex-end;
+
+    &:hover {
+      cursor: pointer;
+      background-color: $mainColor;
+      font-weight: 600;
+      color: $background;
+    }
   }
 }
 

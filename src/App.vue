@@ -30,6 +30,7 @@ export default {
       </nav>
     </div>
     <div class="header__account">
+      <router-link to="/cart"><img src="./assets/cart.png" alt="" class="header__cart"/></router-link>
       <RouterLink to="/my-account">MY ACCOUNT</RouterLink>
     </div>
   </header>
@@ -88,7 +89,14 @@ a {
   }
 
   &__account {
+    display: flex;
     margin: 15px;
+    align-items: center;
+  }
+
+  &__cart {
+    height: 30px;
+    margin-right: 20px;
   }
 }
 

@@ -21,7 +21,7 @@ export const useFirestoreStore = defineStore("firestore", {
                 await setDoc(doc(db, "books", id), book);
                 console.log("Book added");
             } catch (error) {
-                console.log(error);
+                alert(error);
             }
         },
 
@@ -75,6 +75,12 @@ export const useFirestoreStore = defineStore("firestore", {
         updateRating(id, newRating) {
             const bookRef = doc(db, 'books', id);
             setDoc(bookRef, { rating: newRating }, {merge: true});
+        },
+
+        async createCart(id, cart) {
+            const userRef = doc(db, 'users', id);
+            setDoc(userRef, { cart: cart }, {merge: true});
+            console.log("added to cart")
         }
     }
 });

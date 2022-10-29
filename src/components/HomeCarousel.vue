@@ -29,7 +29,7 @@ export default {
         NEWEST<br />
         BESTSELLERS
       </h1>
-      <button class="main__button">SHOP NOW</button>
+      <a href="/shop" class="main__button">SHOP NOW</a>
     </div>
     <img src="../assets/shelf.png" alt="" class="shelf" />
     <div class="main__column--second">
@@ -72,6 +72,9 @@ $mainColor: #6739cb;
   }
 
   &__button {
+    display: block;
+    text-align: center;
+    line-height: 40px;
     width: 50%;
     height: 40px;
     font-family: "Outfit", sans-serif;
@@ -79,6 +82,7 @@ $mainColor: #6739cb;
     margin-top: 20px;
     border: #391b00 solid 2px;
     background-color: transparent;
+    text-decoration: none;
 
     &:hover {
       cursor: pointer;
