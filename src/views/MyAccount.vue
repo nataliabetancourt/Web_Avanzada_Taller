@@ -31,85 +31,135 @@ export default {
       e.preventDefault();
       //Create user object
       const userInfo = {
-        'name': this.name,
-        'lastname': this.lastname,
-        'email': this.emailCreated
+        name: this.name,
+        lastname: this.lastname,
+        email: this.emailCreated,
       };
 
       //Add to authentication
       if (this.passwordCreated == this.passwordConfirmation) {
-        await this.authenticationStore.signUp(this.emailCreated, this.passwordCreated);
+        await this.authenticationStore.signUp(
+          this.emailCreated,
+          this.passwordCreated
+        );
       }
 
       //Add additional info to firestore
-      await this.firestoreStore.addUserDatabase(this.authenticationStore.getUser().uid, userInfo);
+      await this.firestoreStore.addUserDatabase(
+        this.authenticationStore.getUser().uid,
+        userInfo
+      );
 
       this.name = "";
       this.lastname = "";
       this.emailCreated = "";
       this.passwordCreated = "";
       this.passwordConfirmation = "";
-
     },
 
     makeChange(e) {
       e.preventDefault();
-        this.isSignIn = !this.isSignIn;
-        this.isSignUp = !this.isSignUp;
+      this.isSignIn = !this.isSignIn;
+      this.isSignUp = !this.isSignUp;
     },
 
     logOut(e) {
-        e.preventDefault();
-        this.authenticationStore.logOut();
-        this.$router.go()
-    }
+      e.preventDefault();
+      this.authenticationStore.logOut();
+      this.$router.go();
+    },
   },
 
   computed: {
     ...mapStores(useAuthenticationStore, useFirestoreStore),
-    userIsLogged(){
-        return this.authenticationStore.getUser() !== null
-    }
+    userIsLogged() {
+      return this.authenticationStore.getUser() !== null;
+    },
   },
 };
 </script>
 
 <template>
-    <section class="signin" :class="{'signin--hide': isSignUp }" v-if="!userIsLogged">
-        <h1 class="title">Sign in</h1>
-        <form action="">
-            <label for="email" class="label">EMAIL</label>
-            <input type="email" name="email" id="email" v-model="email" class="input">
-            <label for="password" class="label">PASSWORD</label>
-            <input type="password" name="password" id="password" v-model="password" class="input">
-            <button @click="signIn" class="submit">SIGN IN</button>
-            <button class="link" @click="makeChange">Don't have an account? Sign up here</button>
-        </form>
-    </section>
+  <section
+    class="signin"
+    :class="{ 'signin--hide': isSignUp }"
+    v-if="!userIsLogged"
+  >
+    <h1 class="title">Sign in</h1>
+    <form action="">
+      <label for="email" class="label">EMAIL</label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        v-model="email"
+        class="input"
+      />
+      <label for="password" class="label">PASSWORD</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        v-model="password"
+        class="input"
+      />
+      <button @click="signIn" class="submit">SIGN IN</button>
+      <button class="link" @click="makeChange">
+        Don't have an account? Sign up here
+      </button>
+    </form>
+  </section>
 
-    <section class="signup" :class="{'signup--hide': isSignIn }" v-if="!userIsLogged">
-        <h1 class="title">Sign up</h1>
-        <form action="">
-            <label for="name" class="label">NAME</label>
-            <input type="text" name="name" id="name" v-model="name" class="input">
-            <label for="lastname" class="label">LAST NAME</label>
-            <input type="text" name="lastname" id="lastname" v-model="lastname" class="input">
-            <label for="email2" class="label">EMAIL</label>
-            <input type="email" name="email2" id="email2" v-model="emailCreated" class="input">
-            <label for="password2" class="label">PASSWORD</label>
-            <input type="password" name="password2" id="password2" v-model="passwordCreated" class="input">
-            <label for="confirmPassword" class="label">CONFIRM PASSWORD</label>
-            <input type="password" name="confirmPassword" id="confirmPassword" v-model="passwordConfirmation" class="input">
-            <button @click="signUp" class="submit">Create account</button>
-            <button class="link">Already have an account? Sign in here</button>
+  <section
+    class="signup"
+    :class="{ 'signup--hide': isSignIn }"
+    v-if="!userIsLogged"
+  >
+    <h1 class="title">Sign up</h1>
+    <form action="">
+      <label for="name" class="label">NAME</label>
+      <input type="text" name="name" id="name" v-model="name" class="input" />
+      <label for="lastname" class="label">LAST NAME</label>
+      <input
+        type="text"
+        name="lastname"
+        id="lastname"
+        v-model="lastname"
+        class="input"
+      />
+      <label for="email2" class="label">EMAIL</label>
+      <input
+        type="email"
+        name="email2"
+        id="email2"
+        v-model="emailCreated"
+        class="input"
+      />
+      <label for="password2" class="label">PASSWORD</label>
+      <input
+        type="password"
+        name="password2"
+        id="password2"
+        v-model="passwordCreated"
+        class="input"
+      />
+      <label for="confirmPassword" class="label">CONFIRM PASSWORD</label>
+      <input
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        v-model="passwordConfirmation"
+        class="input"
+      />
+      <button @click="signUp" class="submit">Create account</button>
+      <button class="link">Already have an account? Sign in here</button>
+    </form>
+  </section>
 
-        </form>
-    </section>
-
-    <section v-if="userIsLogged">
-        <h1 class="title">Ready to leave?</h1>
-        <button class="submit" @click="logOut">LOG OUT</button>
-    </section>
+  <section v-if="userIsLogged">
+    <h1 class="title">Ready to leave?</h1>
+    <button class="submit" @click="logOut">LOG OUT</button>
+  </section>
 </template>
 
 
@@ -125,15 +175,15 @@ section {
 }
 
 .signup {
-    &--hide {
-        display: none;
-    }
+  &--hide {
+    display: none;
+  }
 }
 
 .signin {
-    &--hide {
-        display: none;
-    }
+  &--hide {
+    display: none;
+  }
 }
 .title {
   font-size: 1.6em;
@@ -189,6 +239,27 @@ section {
 
   &:hover {
     cursor: pointer;
+  }
+}
+
+@media all and (max-width: 420px) {
+  section {
+    margin-left: 20px;
+  }
+  .input {
+    font-family: "Outfit", sans-serif;
+    display: block;
+    font-size: 1em;
+    border: solid 2px $fontColor;
+    padding: 5px;
+    width: 90%;
+    height: 25px;
+    margin-top: 5px;
+    margin-left: 0px;
+  }
+
+  .submit {
+    width: 70%;
   }
 }
 </style>>

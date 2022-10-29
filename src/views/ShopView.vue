@@ -3,7 +3,7 @@ import { mapStores } from "pinia";
 import Stars from "../components/Stars.vue";
 import Footer from "../components/Footer.vue";
 import { useFirestoreStore } from "../stores/firestore";
-import { useAuthenticationStore } from '../stores/authentication';
+import { useAuthenticationStore } from "../stores/authentication";
 
 export default {
   data() {
@@ -36,34 +36,96 @@ export default {
         ],
       },
       drawBooks: [],
-      firebaseBooks: []
+      firebaseBooks: [],
+      genreValues: [
+        "CLASSICS",
+        "HORROR",
+        "SCI-FI",
+        "ROMANCE",
+        "FANTASY",
+        "THRILLER",
+      ],
+      ratingValues: [1, 2, 3, 4],
+      priceValues: ["5-10", "10-15", "15"],
     };
   },
 
   computed: {
     ...mapStores(useAuthenticationStore, useFirestoreStore),
+    uid() {
+      return this.authenticationStore.getUser().uid;
+    },
   },
 
   methods: {
-    filterBooks() {
-      /*this.drawBooks = this.booksStore.filterBooks(this.secondFilter);
-      const filter = this.secondFilter;
-      console.log(this.booksStore.filterBooks(filter));*/
+    async filterBooks() {
+      //Array from firestore
+      let books = await this.firestoreStore.getBooks();
+
+      for (let i = 0; i < books.length; i++) {
+        //Run through genre list values
+        for (let j = 0; j < this.genreValues.length; j++) {
+          //Check if variable is equal to genre values
+          if (this.secondFilter == this.genreValues[j]) {
+            const genreFilteredBooks = books.filter(
+              (book) => book.genre == this.secondFilter
+            );
+            this.drawBooks = genreFilteredBooks;
+          }
+        }
+      }
+
+      //Run through rating list values
+      for (let j = 0; j < this.ratingValues.length; j++) {
+        //Check if variable is equal to rating values
+        if (this.secondFilter == this.ratingValues[j]) {
+          const ratingFilteredBooks = books.filter(
+            (book) => book.rating > this.secondFilter
+          );
+          this.drawBooks = ratingFilteredBooks;
+        }
+      }
+
+      //Run through price list values
+      for (let j = 0; j < this.priceValues.length; j++) {
+
+        //Check if variable is equal to price values
+        if (this.secondFilter == this.priceValues[j]) {
+          let priceFilteredBooks = [];
+          switch (this.secondFilter) {
+            case "5-10":
+              priceFilteredBooks = books.filter(
+                (book) => (5 < book.price < 10)
+              );
+              break;
+            case "10-15":
+              priceFilteredBooks = books.filter(
+                (book) => (10 < book.price < 15)
+              );
+              break;
+            case "15":
+              priceFilteredBooks = books.filter((book) => 15 < book.price);
+              break;
+          }
+
+          this.drawBooks = priceFilteredBooks;
+        }
+      }
     },
 
-    async defineCart(user, bookToAdd){
+    async defineCart(user, bookToAdd) {
       let cart = [];
       let firebaseCart = await this.firestoreStore.getCart(user.uid);
 
-        //Check if cart already exists 
-        if (firebaseCart == null || firebaseCart == undefined) {
-          //Make list with books
-          cart.push(bookToAdd);
-        } else if (firebaseCart.length > 0) {
-          cart = [...firebaseCart, bookToAdd];
-        }
+      //Check if cart already exists
+      if (firebaseCart == null || firebaseCart == undefined) {
+        //Make list with books
+        cart.push(bookToAdd);
+      } else if (firebaseCart.length > 0) {
+        cart = [...firebaseCart, bookToAdd];
+      }
 
-        return cart;
+      return cart;
     },
 
     async addToCart(e, book) {
@@ -73,22 +135,26 @@ export default {
       if (this.authenticationStore.getUser() !== null) {
         //User info
         let uid = this.authenticationStore.getUser().uid;
-        
+
         //Book that is going to cart
         let bookToAdd = {
-          'id': book.id,
-          'title': book.title,
-          'author': book.author,
-          'image': book.image,
-          'price': book.price
-        }
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          image: book.image,
+          price: book.price,
+        };
 
-        this.firestoreStore.createCart(uid, this.defineCart(this.authenticationStore.getUser(), bookToAdd));
-        //this.defineCart(this.authenticationStore.getUser(),bookToAdd);
+        let cartToUpload = await this.defineCart(
+          this.authenticationStore.getUser(),
+          bookToAdd
+        );
+        this.firestoreStore.createCart(uid, cartToUpload);
+        console.log(cartToUpload);
       } else {
         alert("Please sign in before adding to cart");
       }
-    }
+    },
   },
 
   async mounted() {
@@ -138,7 +204,9 @@ export default {
         <p>{{ dollar.format(book.price) }}</p>
         <Stars :rating="book.rating" />
       </div>
-      <button class="shop__add" @click="addToCart($event, book)">ADD TO CART</button>
+      <button class="shop__add" @click="addToCart($event, book)">
+        ADD TO CART
+      </button>
     </RouterLink>
   </div>
   <Footer />
@@ -268,6 +336,7 @@ a {
       width: 100%;
       height: 520px;
       margin: 15px auto;
+      min-height: 610px;
     }
 
     &__img {
@@ -278,6 +347,10 @@ a {
     &__info {
       font-size: 1.2em;
       height: 120px;
+    }
+
+    &__add {
+      margin-bottom: 20px;
     }
   }
 }

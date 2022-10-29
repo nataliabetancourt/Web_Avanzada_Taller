@@ -96,6 +96,6 @@ export const useFirestoreStore = defineStore("firestore", {
             
             const bookRef = doc(db, 'books', book.id);
             setDoc(bookRef, { rating: average }, {merge: true});
-        }
+        },
     }
 });
