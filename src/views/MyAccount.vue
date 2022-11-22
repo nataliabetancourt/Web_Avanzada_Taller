@@ -15,6 +15,7 @@ export default {
       passwordConfirmation: "",
       isSignIn: true,
       isSignUp: false,
+      user: ''
     };
   },
 
@@ -68,6 +69,11 @@ export default {
       this.authenticationStore.logOut();
       this.$router.go();
     },
+
+    deleteAccount(e) {
+      e.preventDefault();
+      this.authenticationStore.deleteAccount();
+    }
   },
 
   computed: {
@@ -76,6 +82,12 @@ export default {
       return this.authenticationStore.getUser() !== null;
     },
   },
+
+  watch: {
+    async userIsLogged() {
+      this.user = await this.firestoreStore.getUser(this.authenticationStore.getUser().uid);
+    }
+  }
 };
 </script>
 
@@ -157,8 +169,12 @@ export default {
   </section>
 
   <section v-if="userIsLogged">
-    <h1 class="title">Ready to leave?</h1>
+    <h1 class="title">Hello {{user.name}} {{user.lastname}}!</h1>
+    <p class="additional">Thanks for coming back! We've missed you, feel free to rate and comment on all of your favorite books, or go ahead and fill up your cart to take some home. Enjoy.</p>
+    <h3 class="subtitle">Are you ready to leave?</h3>
     <button class="submit" @click="logOut">LOG OUT</button>
+    <h3 class="subtitle--eliminate">Have you decided to eliminate your account?</h3>
+    <button class="submit submit--eliminate" @click="deleteAccount">ELIMINATE</button>
   </section>
 </template>
 
@@ -226,6 +242,13 @@ section {
     font-weight: normal;
     color: $background;
   }
+
+  &--eliminate {
+    width: 15%;
+    height: 15px;
+    line-height: 5px;
+
+  }
 }
 
 .link {
@@ -239,6 +262,26 @@ section {
 
   &:hover {
     cursor: pointer;
+  }
+}
+
+.additional {
+  font-size: 1.1em;
+  font-weight: 300;
+  color: $fontColor;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: $fontColor;
+  margin-top: 40px;
+  font-size: 1.3em;
+
+  &--eliminate {
+    font-size: 1.1em;
+    color: $fontColor;
+    font-weight: 600;
+    margin-top: 60px;
   }
 }
 

@@ -39,7 +39,6 @@ export default {
   watch: {
     async uid() {
       let userId = await this.uid;
-      console.log(userId);
       this.loadCart(userId);
     },
   },
