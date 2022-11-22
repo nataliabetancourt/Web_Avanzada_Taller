@@ -55,7 +55,7 @@ export default {
 <template>
   <div class="rate">
     <img :src=this.starRating(this.rating) alt="" class="rate__img"/>
-    <p class="rate__text">{{this.rating.toFixed(2)}}</p>
+    <p class="rate__text">{{this.rating}}</p>
   </div>
 </template>
 

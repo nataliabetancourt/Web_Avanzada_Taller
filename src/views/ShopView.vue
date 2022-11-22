@@ -47,6 +47,17 @@ export default {
       ],
       ratingValues: [1, 2, 3, 4],
       priceValues: ["5-10", "10-15", "15"],
+      edit: false,
+      chosenBook: '',
+
+      //INPUTS FOR BOOK EDIT
+      title: "",
+      author: "",
+      price: "",
+      description: "",
+      genre: "",
+      reader: new FileReader(),
+      imgURL: null,
     };
   },
 
@@ -54,6 +65,10 @@ export default {
     ...mapStores(useAuthenticationStore, useFirestoreStore),
     uid() {
       return this.authenticationStore.getUser().uid;
+    },
+
+    admin() {
+      return this.authenticationStore.getIsAdmin();
     },
   },
 
@@ -88,20 +103,15 @@ export default {
 
       //Run through price list values
       for (let j = 0; j < this.priceValues.length; j++) {
-
         //Check if variable is equal to price values
         if (this.secondFilter == this.priceValues[j]) {
           let priceFilteredBooks = [];
           switch (this.secondFilter) {
             case "5-10":
-              priceFilteredBooks = books.filter(
-                (book) => (5 < book.price < 10)
-              );
+              priceFilteredBooks = books.filter((book) => 5 < book.price < 10);
               break;
             case "10-15":
-              priceFilteredBooks = books.filter(
-                (book) => (10 < book.price < 15)
-              );
+              priceFilteredBooks = books.filter((book) => 10 < book.price < 15);
               break;
             case "15":
               priceFilteredBooks = books.filter((book) => 15 < book.price);
@@ -155,6 +165,49 @@ export default {
         alert("Please sign in before adding to cart");
       }
     },
+
+    showEdit(e, book) {
+      e.preventDefault();
+      this.edit = true;
+      this.chosenBook = book;
+    },
+
+    closeEdit() {
+      this.edit = false;
+    },
+
+    async editBook() {
+      //Book object to be added
+      const book = {
+        id: this.chosenBook.id,
+        title: this.title,
+        author: this.author,
+        price: this.price,
+        description: this.description,
+        genre: this.genre,
+        image: this.imgURL,
+      };
+
+      //Add product to firestore database
+      await this.firestoreStore.editBook(this.chosenBook.id, book);
+
+      //Close pop up when done
+      this.edit = false;
+    },
+
+    async deleteBook() {
+      await this.firestoreStore.deleteBook(this.chosenBook.id);
+      //Close pop up when done
+      this.edit = false;
+    },
+
+    readImage(e) {
+      this.reader.readAsDataURL(e.target.files[0]);
+
+      this.reader.addEventListener("load", () => {
+        this.imgURL = this.reader.result;
+      });
+    },
   },
 
   async mounted() {
@@ -207,7 +260,86 @@ export default {
       <button class="shop__add" @click="addToCart($event, book)">
         ADD TO CART
       </button>
+      <button class="shop__edit" v-if="admin" @click="showEdit($event, book)">
+        EDIT
+      </button>
     </RouterLink>
+  </div>
+
+  <div class="edit" v-if="edit" id="edit-popup">
+    <h2 class="edit__title">Edit product</h2>
+    <button class="edit__close" @click="closeEdit">X</button>
+    <div class="form">
+      <label for="title" class="form__label">TITLE</label>
+      <input
+        type="text"
+        name="name"
+        placeholder="Book title"
+        class="form__input"
+        id="title"
+        v-model="title"
+      />
+
+      <label for="author" class="form__label">AUTHOR</label>
+      <input
+        type="text"
+        name="name"
+        placeholder="Book author"
+        class="form__input"
+        id="author"
+        v-model="author"
+      />
+
+      <label for="price" class="form__label">PRICE</label>
+      <input
+        type="number"
+        name="price"
+        placeholder="Book price"
+        class="form__input"
+        id="price"
+        v-model="price"
+      />
+
+      <label for="description" class="form__label">DESCRIPTION</label>
+      <textarea
+        name="description"
+        class="form__input form__input--description"
+        id="description"
+        placeholder="Write the book summary here..."
+        v-model="description"
+        @change="descriptionBreaks"
+      ></textarea>
+
+      <label for="category" class="form__label">GENRE</label>
+      <select name="category" id="category" class="form__input" v-model="genre">
+        <option hidden disabled selected value>Select an option...</option>
+        <option value="CLASSICS">Classics</option>
+        <option value="HORROR">Horror</option>
+        <option value="THRILLER">Thriller</option>
+        <option value="ROMANCE">Romance</option>
+        <option value="SCI-FI">Sci-Fi</option>
+        <option value="FANTASY">Fantasy</option>
+      </select>
+
+      <label for="images" class="form__label">IMAGES</label>
+      <input
+        type="file"
+        name="images"
+        id="images"
+        class="form__upload"
+        multiple
+        @change="readImage"
+      />
+
+      <button
+        type="submit"
+        class="form__submit"
+        @click="(e) => editBook()"
+      >
+        CHANGE BOOK
+      </button>
+      <button class="form__submit form__submit--delete" @click="deleteBook">DELETE BOOK</button>
+    </div>
   </div>
   <Footer />
 </template>
@@ -273,6 +405,8 @@ a {
   &__info {
     align-items: flex-start;
     color: $fontColor;
+    min-height: 120px;
+    margin-top: 10px;
   }
 
   &__title {
@@ -307,6 +441,148 @@ a {
       background-color: $mainColor;
       font-weight: 600;
       color: $background;
+    }
+  }
+
+  &__edit {
+    margin-top: 10px;
+    width: 100%;
+    background-color: $mainColor;
+    color: $background;
+    border: none;
+    height: 20px;
+    border-radius: 10px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: $fontColor;
+      color: $background;
+    }
+  }
+}
+
+.edit { 
+    background-color: $background;
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+    font-family: "Outfit", sans-serif;
+    color: $fontColor;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 10px;
+
+    &__title {
+      align-items: center;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    &__close {
+    font-family: "Outfit", sans-serif;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 20px;
+      height: 20px;
+      color: $mainColor;
+      font-weight: 700;
+      font-size: 1.3em;
+      border: none;
+      background-color: transparent;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+}
+
+#edit-popup {
+  -webkit-box-shadow:  0px 0px 0px 9999px rgba(0, 0, 0, 0.7);
+  box-shadow:  0px 0px 0px 9999px rgba(0, 0, 0, 0.7);
+}
+
+.form {
+  font-family: "Outfit", sans-serif;
+  margin: 10px auto;
+  width: 90%;
+
+  &__label {
+    font-weight: 500;
+    font-size: 1em;
+  }
+
+  &__input {
+    font-family: "Outfit", sans-serif;
+    display: block;
+    font-size: 1em;
+    border: solid 2px $fontColor;
+    padding: 5px;
+    width: 90%;
+    height: 25px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    &--description {
+      height: 70px;
+    }
+  }
+
+  &__rating {
+    margin-bottom: 10px;
+  }
+
+  &__upload {
+    display: block;
+    margin: 8px 0;
+
+    &::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+
+    &::before {
+      content: "Upload book cover";
+      color: $fontColor;
+      display: inline-block;
+      background-color: white;
+      border: 2px solid $fontColor;
+      border-radius: 3px;
+      padding: 5px 8px;
+      outline: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    &:hover::before {
+      background: $mainColor;
+      color: $background;
+    }
+  }
+
+  &__submit {
+    font-family: "Outfit", sans-serif;
+    color: $fontColor;
+    background-color: transparent;
+    border: 2px solid $fontColor;
+    padding: 10px 40px;
+    width: 35%;
+    margin-top: 20px;
+    font-weight: 500;
+
+    &:hover {
+      cursor: pointer;
+      border: 2px solid $fontColor;
+      background-color: $mainColor;
+      font-weight: normal;
+      color: $background;
+    }
+
+    &--delete {
+      margin-left: 30px;
     }
   }
 }

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { db } from "../firebase/firebase"
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, deleteDoc} from "firebase/firestore";
 
 export const useFirestoreStore = defineStore("firestore", {
     state: () => ({
@@ -95,7 +95,25 @@ export const useFirestoreStore = defineStore("firestore", {
             let average = sum/list.length;
             
             const bookRef = doc(db, 'books', book.id);
-            setDoc(bookRef, { rating: average }, {merge: true});
+            setDoc(bookRef, { rating: average.toFixed(2) }, {merge: true});
         },
+
+        async editBook(id, book) {
+            try {
+                await setDoc(doc(db, "books", id), book);
+                alert("Book has been edited successfully");
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        async deleteBook(id) {
+            try {
+                await deleteDoc(doc(db, "books", id));
+                alert("Deleted book successfully");
+            } catch (error) {
+                console.log(error);
+            }
+        } 
     }
 });

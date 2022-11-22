@@ -12,6 +12,7 @@ export default {
       currentBook: {},
       rating: null,
       userRating: null,
+      comments: [],
       dollar: Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -78,6 +79,8 @@ export default {
     this.currentBook = await this.firestoreStore.getSingleBook(
       this.$route.params.bookId
     );
+
+
   },
 
   components: {
