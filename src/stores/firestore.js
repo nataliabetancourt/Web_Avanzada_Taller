@@ -11,6 +11,7 @@ export const useFirestoreStore = defineStore("firestore", {
         async addUserDatabase(userId, userInfo = {}) {
             try {
                 await setDoc(doc(db, "users", userId), userInfo);
+                console.log("User added");
             } catch (e) {
                 console.log(e)
             }
@@ -42,9 +43,11 @@ export const useFirestoreStore = defineStore("firestore", {
 
         async getSingleBook(id) {
             const docRef = doc(db, "books", id);
+
             try {
                 const docSnap = await getDoc(docRef);
                 const data = docSnap.data();
+                console.log(data)
                 return data;
             } catch (error) {
                 console.log(error);
@@ -101,6 +104,7 @@ export const useFirestoreStore = defineStore("firestore", {
         async editBook(id, book) {
             try {
                 await setDoc(doc(db, "books", id), book);
+                console.log("Book has been edited successfully");
                 alert("Book has been edited successfully");
             } catch (error) {
                 console.log(error);
@@ -110,6 +114,7 @@ export const useFirestoreStore = defineStore("firestore", {
         async deleteBook(id) {
             try {
                 await deleteDoc(doc(db, "books", id));
+                console.log("Deleted book successfully");
                 alert("Deleted book successfully");
             } catch (error) {
                 console.log(error);

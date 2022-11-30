@@ -115,8 +115,8 @@ export default {
         v-model="password"
         class="input"
       />
-      <button @click="signIn" class="submit">SIGN IN</button>
-      <button class="link" @click="makeChange">
+      <button @click="signIn" class="submit" id="signInBtn">SIGN IN</button>
+      <button class="link" @click="makeChange" id="switch">
         Don't have an account? Sign up here
       </button>
     </form>
@@ -163,7 +163,7 @@ export default {
         v-model="passwordConfirmation"
         class="input"
       />
-      <button @click="signUp" class="submit">Create account</button>
+      <button @click="signUp" class="submit" id="signUpBtn">Create account</button>
       <button class="link">Already have an account? Sign in here</button>
     </form>
   </section>

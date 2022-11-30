@@ -2,7 +2,6 @@
 import Footer from "../components/Footer.vue";
 import StarRating from "vue-star-rating";
 import { mapStores } from "pinia";
-import { useBooksStore } from "../stores/books.js";
 import { useFirestoreStore } from "../stores/firestore";
 
 export default {
@@ -20,7 +19,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useBooksStore, useFirestoreStore),
+    ...mapStores(useFirestoreStore),
   },
 
   methods: {

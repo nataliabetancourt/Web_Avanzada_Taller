@@ -55,10 +55,6 @@ export default {
   },
 
   methods: {
-    example() {
-      console.log("it works");
-    },
-
     onListItemClick(title) {
       //Establish which title is showing
       this.showInfo.name = title.name;
@@ -92,6 +88,7 @@ export default {
       v-for="title in titles"
       :key="title.name"
       @click="() => onListItemClick(title)"
+      id="favorites"
     >
       {{ title.name }}
     </li>

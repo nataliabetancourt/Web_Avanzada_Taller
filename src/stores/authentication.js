@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { auth, db } from "../firebase/firebase"
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser } from "firebase/auth";
-import { async } from "@firebase/util";
 import { deleteDoc, doc } from "firebase/firestore";
 
 export const useAuthenticationStore = defineStore("authentication", {
